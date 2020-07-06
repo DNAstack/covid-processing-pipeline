@@ -57,7 +57,7 @@ tabix ${SAMPLENAME}.medaka.vcf.gz
 
 
 cp ${SAMPLENAME}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/${SAMPLENAME}*.consensus.fasta ${SAMPLENAME}.consensus.fa
-sed -i '1!b;s/_execution//' ${SAMPLENAME}.consensus.fa
+sed -i '1!b;s~'"${SAMPLENAME}[^/]*~${SAMPLENAME}~" ${SAMPLENAME}.consensus.fa
 
 find -regex ".*/${SAMPLENAME}/articNcovNanopore_sequenceAnalysisMedaka_articMinIONMedaka/${SAMPLENAME}[^.]*.sorted.bam" -regextype sed -exec cp {} ./${SAMPLENAME}.bam \;
 samtools index ${SAMPLENAME}.bam
