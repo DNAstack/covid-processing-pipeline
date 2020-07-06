@@ -1,0 +1,13 @@
+{
+  "main.Run_ID": "SRR11593374",
+  "main.type": "NANOPORE",
+  "main.signal_scheme_bed": "data/primer_schemes/nCoV-2019/V1/nCoV-2019.bed",
+  "main.artic_primer_version": "V1",
+  "main.human_reference": "data/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.tar.gz",
+  "main.kraken_db": "data/Kraken2.tar.gz",
+  "main.viral_reference_genome": "data/MN908947.3.fasta",
+  "main.viral_reference_feature_coords": "data/MN908947.3.gff3",
+  "main.breseq_reference": "data/MN908947.3.gbk",
+  "main.artic_min_length": 400,
+  "main.artic_max_length": 700
+}

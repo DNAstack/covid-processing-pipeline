@@ -1,0 +1,21 @@
+{
+  "main.Run_ID": "String",
+  "main.type": "String",
+  "main.signal_scheme_bed": "File",
+  "main.artic_primer_version": "String",
+  "main.human_reference": "data/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.tar.gz",
+  "main.kraken_db": "data/Kraken2.tar.gz",
+  "main.viral_reference_genome": "data/MN908947.3.fasta",
+  "main.viral_reference_feature_coords": "data/MN908947.3.gff3",
+  "main.breseq_reference": "data/MN908947.3.gbk",
+  "main.min_freq_high_confidence_threshold": 0.25,
+  "main.ivar_min_freq_threshold": 0.03,
+  "main.ivar_min_coverage_depth": 10,
+  "main.ivar_min_variant_quality": 20,
+  "main.ivar_freq_threshold": 0.75,
+  "main.mpileup_depth": 100000,
+  "main.signal_min_qual": 20,
+  "main.signal_min_length": 20,
+  "main.artic_min_length": 400,
+  "main.artic_max_length": 700
+}
