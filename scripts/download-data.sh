@@ -9,6 +9,8 @@ Usage: $0 [options]
 
   -h    Print this message and exit
   -r    Redownload files (replace existing files if they exist). Default is to skip downloading existing files
+  -f		Download data needed for the 'from_fastq' workflow
+  -a		Download data needed for the 'from_assmebly' workflow
 
 EOF
 }
@@ -29,28 +31,38 @@ fi
 
 ## Config
 DATA_DIR=data
+
+### From fastq data
 KRAKEN2_DB=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/Kraken2.tar.gz
-HUMAN_REFERENCE=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.tar.gz
+COMPOSITE_REFERENCE=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/composite_human_viral_reference.tar.gz
 VIRAL_REFERENCE=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/MN908947.3.fasta
 VIRAL_REFERENCE_FEATURE_COORDS=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/MN908947.3.gff3
-# For breseq
-VIRAL_GBK=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/MN908947.3.gbk
+
+### From assembly data
+VIRAL_REFERENCE=https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/MN908947.3.fasta
+SNPEFF_DB="https://storage.googleapis.com/dnastack-data-ingestion-storage/resources/NC_045512.2.zip"
 
 
-while getopts "hr" OPTION; do
+while getopts "hrfa" OPTION; do
 	case $OPTION in
 		h) usage; exit;;
 		r) REDOWNLOAD=TRUE;;
-		\?) usage; exit;;		
+		f) DOWNLOAD_FROM_FASTQ_DATA=TRUE;;
+		a) DOWNLOAD_FROM_ASSEMBLY_DATA=TRUE;;
+		\?) usage; exit;;
 	esac
 done
 
 
 ## Main
+if [ "${DOWNLOAD_FROM_FASTQ_DATA}" == "TRUE" ]; then
+	getFile "${KRAKEN2_DB}"
+	getFile "${COMPOSITE_REFERENCE}"
+	getFile "${VIRAL_REFERENCE}"
+	getFile "${VIRAL_REFERENCE_FEATURE_COORDS}"
+fi
 
-getFile "${KRAKEN2_DB}" 
-getFile "${HUMAN_REFERENCE}"
-getFile "${VIRAL_REFERENCE}"
-getFile "${VIRAL_REFERENCE_FEATURE_COORDS}"
-getFile "${VIRAL_GBK}"
-
+if [ "${DOWNLOAD_FROM_ASSEMBLY_DATA}" == "TRUE" ]; then
+	getFile "${VIRAL_REFERENCE}"
+	getFile "${SNPEFF_DB}"
+fi

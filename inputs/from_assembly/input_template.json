@@ -1,0 +1,9 @@
+{
+  "assembly_to_vcf.sample_id": "String",
+  "assembly_to_vcf.assembly": "File",
+  "assembly_to_vcf.reference_genome": "data/MN908947.3.fasta",
+  "assembly_to_vcf.reference_genome_id": "MN908947.3",
+  "assembly_to_vcf.date": "String",
+  "assembly_to_vcf.snpEff_genome": "NC_045512.2",
+  "assembly_to_vcf.snpEff_db": "data/NC_045512.2.zip"
+}

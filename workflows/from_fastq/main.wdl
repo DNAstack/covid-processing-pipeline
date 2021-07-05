@@ -5,7 +5,7 @@ import "artic/artic.wdl" as nanopore
 
 workflow main {
 	input {
-		String Run_ID
+		String accession
 		String type
 
 		# ARTIC
@@ -15,9 +15,12 @@ workflow main {
 
 		# SIGNAL
 		File signal_scheme_bed
+		File signal_primer_pairs_tsv
+		File signal_amplicon_bed
 
 		File viral_reference_genome
-		File human_reference
+		File composite_reference
+		String viral_reference_contig_name
 
 		## Trimgalore, Ivar
 		Int signal_min_length = 20
@@ -29,13 +32,8 @@ workflow main {
 		Float ivar_min_freq_threshold = 0.03
 		Int ivar_min_variant_quality = 20
 
-		Float min_freq_high_confidence_threshold = 0.25
-
 		## Samtools mpileup
 		Int mpileup_depth = 100000
-
-		## breseq
-		File breseq_reference
 
 		## kraken
 		File kraken_db
@@ -46,37 +44,38 @@ workflow main {
 
 	call download_fastqs {
 		input:
-			Run_ID = Run_ID,
+			accession = accession,
 			type = type
 	}
 
 	if (type == "ILLUMINA_PE") {
 		call illumina_paired.signal {
 			input:
-				samplename = Run_ID,
+				accession = accession,
 				fastq_R1s = download_fastqs.R1,
 				fastq_R2s = download_fastqs.R2,
 				scheme_bed = signal_scheme_bed,
+				primer_pairs_tsv = signal_primer_pairs_tsv,
+				amplicon_bed = signal_amplicon_bed,
 				min_qual = signal_min_qual,
 				min_length = signal_min_length,
-				human_reference = human_reference,
+				composite_reference = composite_reference,
 				viral_reference_genome = viral_reference_genome,
 				viral_reference_feature_coords = viral_reference_feature_coords,
-				breseq_reference = breseq_reference,
+				viral_reference_contig_name = viral_reference_contig_name,
 				kraken_db = kraken_db,
 				mpileup_depth = mpileup_depth,
 				ivar_freq_threshold = ivar_freq_threshold,
 				ivar_min_coverage_depth = ivar_min_coverage_depth,
 				ivar_min_freq_threshold = ivar_min_freq_threshold,
-				ivar_min_variant_quality = ivar_min_variant_quality,
-				min_freq_high_confidence_threshold = min_freq_high_confidence_threshold	
+				ivar_min_variant_quality = ivar_min_variant_quality
 		}
 	}
 
 	if (type == "NANOPORE") {
 		call nanopore.artic {
 			input:
-				samplename = Run_ID,
+				samplename = accession,
 				fastqs = download_fastqs.SE_read,
 				artic_primer_version = artic_primer_version,
 				min_length = artic_min_length,
@@ -89,11 +88,8 @@ workflow main {
 		File consensus_fa = select_first([signal.consensus_fa, artic.consensus_fa])
 		File vcf = select_first([signal.vcf, artic.vcf])
 		File vcf_index = select_first([signal.vcf_index, artic.vcf_index])
-		File low_confidence_vcf = select_first([signal.low_freq_vcf, artic.unfiltered_vcf])
-		File low_confidence_vcf_index = select_first([signal.low_freq_vcf_index, artic.unfiltered_vcf_index])
 		File bam = select_first([signal.bam, artic.bam])
-		File bam_index = select_first([signal.bam_index, artic.bam_index])
-		File full_output = select_first([signal.full_output, artic.full_output])
+		Array [File] full_output = select_first([signal.full_output, artic.full_output])
 	}
 
 	meta {
@@ -105,50 +101,80 @@ workflow main {
 
 task download_fastqs {
 	input {
-		String Run_ID
+		String accession
 		String type
 	}
 
-	Int threads = 8
-
 	command {
+		set -Eo pipefail
+
+		use_fastq_dump=false
+
 		retries=5
 		status=1
+
+		fastq_dump=""
 		reads_invalid=""
+
 		while [ $retries -gt 0 ] && [ $status -ne 0 ] || [ -n "$reads_invalid" ]; do
+			echo "Trying download with [$retries] retries (fasterq-dump)"
+
 			fasterq-dump \
-				--threads ~{threads} \
-				--mem 6GB \
+				--mem 3GB \
 				--split-3 \
-				~{Run_ID} \
+				~{accession} \
 				2> dump.stderr.txt
 			status=$?
 			reads_invalid=$(grep "reads invalid" dump.stderr.txt)
+			fastq_dump=$(grep "fastq-dump" dump.stderr.txt)
+			if [ -n "$fastq_dump" ]; then
+				cat dump.stderr.txt
+				use_fastq_dump=true
+				break
+			fi
 			((retries--))
 		done
 
+		# Try using fastq-dump rather than fasterq-dump
+		if [ "$use_fastq_dump" = "true" ] || [ $status -ne 0 ] || [ -n "$reads_invalid" ]; then
+			retries=5
+			status=1
+			reads_invalid=""
+			while [ $retries -gt 0 ] && [ $status -ne 0 ] || [ -n "$reads_invalid" ]; do
+				echo "Trying download with [$retries] retries (fastq-dump)"
+
+				fastq-dump \
+					--split-e \
+					~{accession} \
+					2> dump.stderr.txt \
+				status=$?
+				reads_invalid=$(grep "reads invalid" dump.stderr.txt)
+				((retries--))
+			done
+		fi
+
 		if [ $status -ne 0 ] || [ -n "$reads_invalid" ]; then
-			>&2 echo -e "[ERROR]: Error downloading fastqs.\nrc: [$status]\ninvalid reads: [$reads_invalid]"
+			>&2 echo -e "[ERROR]: Error downloading fastqs.\\nrc: [$status]\\ninvalid reads: [$reads_invalid]\\nStderr:\\n$(cat dump.stderr.txt)"
 			exit 1
 		fi
 
 		if [ ~{type} = "ILLUMINA_PE" ]; then
-			if [ -e ~{Run_ID}_1.fastq ]; then
-				gzip ~{Run_ID}_1.fastq
+			if [ -e ~{accession}_1.fastq ]; then
+				bgzip ~{accession}_1.fastq
 			else
 				echo "ERROR: Could not find read 1 for ILLUMINA_PE sample"
 				exit 1
 			fi
-	
-			if [ -e ~{Run_ID}_2.fastq ]; then
-				gzip ~{Run_ID}_2.fastq
+
+			if [ -e ~{accession}_2.fastq ]; then
+				bgzip ~{accession}_2.fastq
 			else
 				echo "ERROR: Could not find read 2 for ILLUMINA_PE sample"
 				exit 1
 			fi
 		elif [ ~{type} = "NANOPORE" ]; then
-			if [ -e ~{Run_ID}.fastq ]; then
-				gzip --keep ~{Run_ID}.fastq
+			if [ -e ~{accession}.fastq ]; then
+				bgzip -c ~{accession}.fastq > ~{accession}.fastq.gz
 			else
 				echo "ERROR: Could not find SE reads for NANOPORE sample"
 				exit 1
@@ -159,14 +185,14 @@ task download_fastqs {
 	output {
 		Array [File] R1 = glob("*_1.fastq.gz")
 		Array [File] R2 = glob("*_2.fastq.gz")
-		Array [File] SE_read = glob("~{Run_ID}.fastq")
-		Array [File] SE_read_zipped = glob("~{Run_ID}.fastq.gz")
+		Array [File] SE_read = glob("~{accession}.fastq")
+		Array [File] SE_read_zipped = glob("~{accession}.fastq.gz")
 	}
 
 	runtime {
-		docker: "dnastack/sra-toolkit:2.10.7"
-		cpu: threads
-		memory: "7.20 GB"
+		docker: "dnastack/sra-toolkit-tabix:2.10.7"
+		cpu: 1
+		memory: "3.5 GB"
 		disks: "local-disk 50 HDD"
 	}
 }

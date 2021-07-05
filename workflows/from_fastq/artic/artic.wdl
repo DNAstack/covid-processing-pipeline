@@ -22,11 +22,8 @@ workflow artic {
 		File vcf = run_artic.vcf
 		File vcf_index = run_artic.vcf_index
 		File consensus_fa = run_artic.consensus_fa
-		File unfiltered_vcf = run_artic.unfiltered_vcf
-		File unfiltered_vcf_index = run_artic.unfiltered_vcf_index
 		File bam = run_artic.bam
-		File bam_index = run_artic.bam_index
-		File full_output = run_artic.full_output
+		Array [File] full_output = [run_artic.full_output]
 	}
 }
 
@@ -69,10 +66,7 @@ task run_artic {
 		File consensus_fa = "~{samplename}.consensus.fa"
 		File vcf = "~{samplename}.vcf.gz"
 		File vcf_index = "~{samplename}.vcf.gz.tbi"
-		File unfiltered_vcf = "~{samplename}.medaka.vcf.gz"
-		File unfiltered_vcf_index = "~{samplename}.medaka.vcf.gz.tbi"
 		File bam = "~{samplename}.bam"
-		File bam_index = "~{samplename}.bam.bai"
 		File full_output = "~{samplename}.tar.gz"
 	}
 
