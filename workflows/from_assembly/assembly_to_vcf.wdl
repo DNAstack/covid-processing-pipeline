@@ -33,6 +33,12 @@ workflow assembly_to_vcf {
 		File annotated_vcf = annotate_variants.annotated_vcf
 		File annotated_vcf_index = annotate_variants.annotated_vcf_index
 	}
+
+	meta {
+		author: "Heather Ward"
+		email: "heather@dnastack.com"
+		description: "Workflow to calculate and annotate variants from SARS-CoV-2 assembly data"
+	}
 }
 
 task call_variants {
