@@ -1,0 +1,12 @@
+{
+  "SARS_CoV_2_Illumina.accession": "String",
+  "SARS_CoV_2_Illumina.fastq_R1s": "Array[File]",
+  "SARS_CoV_2_Illumina.fastq_R2s": "Array[File]",
+  "SARS_CoV_2_Illumina.scheme_bed": "File",
+  "SARS_CoV_2_Illumina.viral_reference_genome": "File",
+  "SARS_CoV_2_Illumina.viral_reference_feature_coords": "File",
+  "SARS_CoV_2_Illumina.viral_reference_contig_name": "String",
+  "SARS_CoV_2_Illumina.primer_pairs_tsv": "File",
+  "SARS_CoV_2_Illumina.amplicon_bed": "File",
+  "SARS_CoV_2_Illumina.container_registry": "dnastack"
+}

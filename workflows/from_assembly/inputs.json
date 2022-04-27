@@ -1,0 +1,7 @@
+{
+  "assembly_to_vcf.accession": "String",
+  "assembly_to_vcf.assembly": "File",
+  "assembly_to_vcf.reference_genome": "File",
+  "assembly_to_vcf.reference_genome_id": "MN908947.3",
+  "assembly_to_vcf.container_registry": "dnastack"
+}

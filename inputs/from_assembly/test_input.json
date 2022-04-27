@@ -1,9 +1,0 @@
-{
-  "assembly_to_vcf.sample_id": "MZ492368",
-  "assembly_to_vcf.assembly": "data/MZ492368.fasta",
-  "assembly_to_vcf.reference_genome": "data/MN908947.3.fasta",
-  "assembly_to_vcf.reference_genome_id": "MN908947.3",
-  "assembly_to_vcf.date": "2021-07-05_17:53:59",
-  "assembly_to_vcf.snpEff_genome": "NC_045512.2",
-  "assembly_to_vcf.snpEff_db": "data/NC_045512.2.zip"
-}

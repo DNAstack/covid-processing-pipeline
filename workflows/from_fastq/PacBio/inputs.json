@@ -1,0 +1,7 @@
+{
+  "SARS_CoV_2_PacBio.accession": "String",
+  "SARS_CoV_2_PacBio.primer_trimmed_fastq": "File",
+  "SARS_CoV_2_PacBio.reference": "File",
+  "SARS_CoV_2_PacBio.reference_index": "File",
+  "SARS_CoV_2_PacBio.container_registry": "dnastack"
+}

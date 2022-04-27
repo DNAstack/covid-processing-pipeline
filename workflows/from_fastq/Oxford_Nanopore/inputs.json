@@ -1,0 +1,9 @@
+{
+  "SARS_CoV_2_Oxford_Nanopore.accession": "String",
+  "SARS_CoV_2_Oxford_Nanopore.fastqs": "Array[File]",
+  "SARS_CoV_2_Oxford_Nanopore.primer_version": "String",
+  "SARS_CoV_2_Oxford_Nanopore.min_length": "Int",
+  "SARS_CoV_2_Oxford_Nanopore.max_length": "Int",
+  "SARS_CoV_2_Oxford_Nanopore.min_reads": "Int",
+  "SARS_CoV_2_Oxford_Nanopore.container_registry": "dnastack"
+}
