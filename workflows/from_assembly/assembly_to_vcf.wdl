@@ -67,7 +67,7 @@ task call_variants {
 	}
 
 	runtime {
-		docker: "~{container_registry}/variants_from_assembly:0.0.1"
+		docker: "~{container_registry}/assembly_to_vcf_tools:0.0.1"
 		cpu: 1
 		memory: "3.75 GB"
 		disks: "local-disk 20 HDD"
