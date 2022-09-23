@@ -6,6 +6,8 @@ The [FASTQ-based workflows](#fastq-based-workflows) produce variant calls, assem
 
 An [assembly-based workflow](#assembly-based-workflow) which calculates pseudo-variant sites and assigns lineage using assembled SARS-CoV-2 genomes is also included.
 
+Docker image definitions can be explored [in DNAstack's image repository](https://github.com/dnastack/bioinformatics-public-docker-images), or [on Dockerhub](https://hub.docker.com/u/dnastack).
+
 
 ## Workflows
 
