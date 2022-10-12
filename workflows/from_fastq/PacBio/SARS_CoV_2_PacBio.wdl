@@ -1,6 +1,6 @@
 version 1.0
 
-import "https://raw.githubusercontent.com/DNAstack/PacBio_CoSA/master/workflows/cosa.wdl" as cosa
+import "https://raw.githubusercontent.com/DNAstack/PacBio/main/CoSA-CoronavirusSequencingAnalysis/workflows/cosa.wdl" as cosa
 import "https://raw.githubusercontent.com/DNAstack/covid-processing-pipeline/master/workflows/common/common.wdl" as common
 
 workflow SARS_CoV_2_PacBio {
