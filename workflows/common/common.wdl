@@ -25,7 +25,7 @@ task assign_lineage {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pangolin:4.1.2"
+		docker: "~{container_registry}/pangolin:4.1.3"
 		cpu: threads
 		memory: "7.5 GB"
 		disks: "local-disk 50 HDD"
